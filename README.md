@@ -1,4 +1,4 @@
-# two-stack-visualizer
+# two-stack-visualizer smecheire
 
 An implementation of the two-stack algorithm.
 
