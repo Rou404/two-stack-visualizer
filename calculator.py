@@ -2,27 +2,23 @@
 # Done by Stegeran Darius Cosmin
 from tabulate import tabulate
 
-expression = [x for x in "A * ( F % B ^ ( C / E ) )".split(" ")]
-operator = []
 stack = []
-operator_value = {"+": 1, "-": 1, "*": 2, "/": 2, "(": 0, ")": 0, "^": 3, "%": 2}
-print(expression)
-auxiliary = []
-final = []
 
-def readfrominput(expression):
+def readfrominput(exp):
+    expression = [x for x in exp.split(" ")]
+    operator = []
+    operator_value = {"+": 1, "-": 1, "*": 2, "/": 2, "(": 0, ")": 0, "^": 3, "%": 2}
+    final = []
     for token in expression:
         auxiliary = []
-        if token.isalnum():
-            stack.append(str(token))
+        if token.isdigit():
+            stack.append(int(token))
         elif token == "(":
             operator.append(token)
         elif token == ")":
             while operator and operator[-1] != "(":
                 calculator(operator[-1])
                 operator.pop()
-            aux = "("+stack.pop()+")"
-            stack.append(aux)
             operator.pop()
         else:
             while len(operator) and operator_value[operator[-1]] >= operator_value[token]:
@@ -45,8 +41,7 @@ def readfrominput(expression):
         else:
             auxiliary.append(" ")
             auxiliary.append("Result is: ")
-            y = " ".join([str(x) for x in stack])
-            auxiliary.append(y)
+            auxiliary.append(str(stack))
             final.append(auxiliary)
 
     print(tabulate(final, headers = ["Token", "Operator Stack", "Evaluation Stack"], tablefmt="grid"))
@@ -54,29 +49,27 @@ def readfrominput(expression):
 def calculator(exp):
     match exp:
         case "+":
-            a = stack.pop()
-            aux = stack.pop() + " + " + a
+            aux = stack.pop() + stack.pop()
             stack.append(aux)
         case "-":
-            a = stack.pop()
-            aux = stack.pop() + " - " + a
+            aux = stack.pop() - stack.pop()
             stack.append(aux)
         case "*":
-            a = stack.pop()
-            aux = stack.pop() + " * " + a
+            aux = stack.pop() * stack.pop()
             stack.append(aux)
         case "/":
-            a = stack.pop()
-            aux = stack.pop()+" / "+a
-            stack.append(aux)
+            aux = stack.pop() / stack.pop()
+            stack.append(float("{:.2f}".format(aux)))
         case "%":
-            a = stack.pop()
-            aux = stack.pop() + " % " + a
+            aux = stack.pop() % stack.pop()
             stack.append(aux)
         case "^":
             a = stack.pop()
-            aux = stack.pop() + " ^ " + a
-            stack.append(aux)
+            b = stack.pop()
+            if b < 0:
+                aux = -b ** a
+            else:
+                aux = b ** a
+            stack.append(float("{:.2f}".format(aux)))
 
-readfrominput(expression)
 
