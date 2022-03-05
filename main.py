@@ -1,27 +1,69 @@
 # This is an optional project for Formal Languages and Automata Theory 2021-2022.
 # Done by Stegeran Darius Cosmin
+from tabulate import tabulate
 
-expression = [x for x in input()]
-expression = expression[::-1]
+expression = [x for x in "1 + 2 * ( 3 + 5 )".split(" ")]
 operator = []
-evaluation = []
-operator_value = {"+": 1, "-": 1, "*": 2, "/": 2}
-current = 0
-
+stack = []
+operator_value = {"+": 1, "-": 1, "*": 2, "/": 2, "(": 0, ")": 0}
 print(expression)
-print("token     operators        evaluation")
-while expression:
-    x = expression.pop()
-    if x.isdigit():
-        evaluation.append(x)
-    elif operator_value[x] > current:
-        operator.append(x)
-        current = operator_value[x]
-    else:
-        operator.append(x)
-        operator[len(operator)-2] = "("+str(x)+")"
-        print("things should happen")
-        #evaluation.insert(max(index for index, item in enumerate(operator) if item == x) - 1, x)
+auxiliary = []
+final = []
+def readfrominput(expression):
+    for token in expression:
+        print(token, "\n")
+        if token.isdigit():
+            stack.append(int(token))
+        elif token == "(":
+            operator.append(token)
+        elif token == ")":
+            while operator and operator[-1] != "(":
+                calculator(operator[-1])
+                operator.pop()
+            operator.pop()
+        else:
+            while len(operator) and operator_value[operator[-1]] >= operator_value[token]:
+                calculator(token)
+            operator.append(token)
+        auxiliary.append(token)
+        auxiliary.append(" ".join(operator))
+        auxiliary.append(" ".join(stack))
+        final.append(auxiliary)
+    while len(operator):
+        calculator(operator[-1])
+        operator.pop()
+        auxiliary.append(operator[-1])
+        auxiliary.append(" ".join(operator))
+        auxiliary.append(" ".join(stack))
+        final.append(auxiliary)
+    print(tabulate(final, headers = ["Token", "Operator Stack", "Evaluation Stack"], tablefmt="grid"))
 
-    print(str(x)+"           |   "+" | ".join(operator)+"                |   "+" | ".join(evaluation))
+ def calculator(exp):
+    match exp:
+        case "+":
+            aux = stack.pop() + stack.pop()
+            stack.append(aux)
+        case "-":
+            aux = stack.pop() - stack.pop()
+            stack.append(aux)
+        case "*":
+            aux = stack.pop() * stack.pop()
+            stack.append(aux)
+        case "/":
+            aux = stack.pop() / stack.pop()
+            stack.append(float("{:.2f}".format(aux)))
+        case "%":
+            aux = stack.pop() % stack.pop()
+            stack.append(aux)
+        case "^":
+            a = stack.pop()
+            b = stack.pop()
+            if a < 0:
+                aux = -a ** b
+            else:
+                aux = a ** b
+            stack.append(float("{:.2f}".format(aux)))
+
+
+readfrominput(expression)
 
