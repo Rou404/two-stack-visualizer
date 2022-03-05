@@ -1,5 +1,5 @@
 # This is an optional project for Formal Languages and Automata Theory 2021-2022.
-# Done by Stegeran Darius Cosmin l
+# Done by Stegeran Darius Cosmin
 from tabulate import tabulate
 
 expression = [x for x in "2 * ( 5 + 3 )".split(" ")]
