@@ -2,16 +2,17 @@
 # Done by Stegeran Darius Cosmin
 from tabulate import tabulate
 
-expression = [x for x in "1 + 2 * ( 3 + 5 )".split(" ")]
+expression = [x for x in "2 * ( 5 + 3 )".split(" ")]
 operator = []
 stack = []
-operator_value = {"+": 1, "-": 1, "*": 2, "/": 2, "(": 0, ")": 0}
+operator_value = {"+": 1, "-": 1, "*": 2, "/": 2, "(": 0, ")": 0, "^": 3, "%": 2}
 print(expression)
 auxiliary = []
 final = []
+
 def readfrominput(expression):
     for token in expression:
-        print(token, "\n")
+        auxiliary = []
         if token.isdigit():
             stack.append(int(token))
         elif token == "(":
@@ -23,22 +24,31 @@ def readfrominput(expression):
             operator.pop()
         else:
             while len(operator) and operator_value[operator[-1]] >= operator_value[token]:
-                calculator(token)
+                calculator(operator[-1])
+                operator.pop()
             operator.append(token)
         auxiliary.append(token)
         auxiliary.append(" ".join(operator))
-        auxiliary.append(" ".join(stack))
+        auxiliary.append(" ".join([str(x) for x in stack]))
         final.append(auxiliary)
     while len(operator):
+        auxiliary = []
         calculator(operator[-1])
         operator.pop()
-        auxiliary.append(operator[-1])
-        auxiliary.append(" ".join(operator))
-        auxiliary.append(" ".join(stack))
-        final.append(auxiliary)
+        if operator:
+            auxiliary.append(operator[-1])
+            auxiliary.append(" ".join(operator))
+            auxiliary.append(" ".join([str(x) for x in stack]))
+            final.append(auxiliary)
+        else:
+            auxiliary.append(" ")
+            auxiliary.append("Result is: ")
+            auxiliary.append(str(stack))
+            final.append(auxiliary)
+
     print(tabulate(final, headers = ["Token", "Operator Stack", "Evaluation Stack"], tablefmt="grid"))
 
- def calculator(exp):
+def calculator(exp):
     match exp:
         case "+":
             aux = stack.pop() + stack.pop()
@@ -58,12 +68,11 @@ def readfrominput(expression):
         case "^":
             a = stack.pop()
             b = stack.pop()
-            if a < 0:
-                aux = -a ** b
+            if b < 0:
+                aux = -b ** a
             else:
-                aux = a ** b
+                aux = b ** a
             stack.append(float("{:.2f}".format(aux)))
-
 
 readfrominput(expression)
 
