@@ -1,5 +1,5 @@
 # This is an optional project for Formal Languages and Automata Theory 2021-2022.
-# Done by Stegeran Darius Cosmin 1
+# Done by Stegeran Darius Cosmin
 from tabulate import tabulate
 
 stack = []
