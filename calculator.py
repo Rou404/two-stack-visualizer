@@ -10,7 +10,6 @@ def readfrominput(exp):
     operator_value = {"+": 1, "-": 1, "*": 2, "/": 2, "(": 0, ")": 0, "^": 3, "%": 2}
     final = []
     for token in expression:
-        auxiliary = []
         if token.isdigit():
             stack.append(int(token))
         elif token == "(":
@@ -19,30 +18,25 @@ def readfrominput(exp):
             while operator and operator[-1] != "(":
                 calculator(operator[-1])
                 operator.pop()
+                final.append([token, " ".join(operator), " ".join([str(x) for x in stack])])
             operator.pop()
-        else:
+        elif token in operator_value.keys():
             while len(operator) and operator_value[operator[-1]] >= operator_value[token]:
                 calculator(operator[-1])
                 operator.pop()
+                final.append([token, " ".join(operator), " ".join([str(x) for x in stack])])
             operator.append(token)
-        auxiliary.append(token)
-        auxiliary.append(" ".join(operator))
-        auxiliary.append(" ".join([str(x) for x in stack]))
-        final.append(auxiliary)
+        else:
+            stack.append(int(token))
+        final.append([token," ".join(operator)," ".join([str(x) for x in stack])])
     while len(operator):
-        auxiliary = []
         calculator(operator[-1])
         operator.pop()
+
         if operator:
-            auxiliary.append(operator[-1])
-            auxiliary.append(" ".join(operator))
-            auxiliary.append(" ".join([str(x) for x in stack]))
-            final.append(auxiliary)
+            final.append([operator[-1]," ".join(operator)," ".join([str(x) for x in stack])])
         else:
-            auxiliary.append(" ")
-            auxiliary.append("Result is: ")
-            auxiliary.append(str(stack))
-            final.append(auxiliary)
+            final.append([" ","Result is: ", stack.pop()])
 
     print(tabulate(final, headers = ["Token", "Operator Stack", "Evaluation Stack"], tablefmt="grid"))
 
@@ -52,17 +46,20 @@ def calculator(exp):
             aux = stack.pop() + stack.pop()
             stack.append(aux)
         case "-":
-            aux = stack.pop() - stack.pop()
+            a = stack.pop()
+            aux = stack.pop() - a
             stack.append(aux)
         case "*":
             aux = stack.pop() * stack.pop()
             stack.append(aux)
         case "/":
-            aux = stack.pop() / stack.pop()
+            a = stack.pop()
+            aux = stack.pop() / a
             stack.append(float("{:.2f}".format(aux)))
         case "%":
-            aux = stack.pop() % stack.pop()
-            stack.append(aux)
+            a = stack.pop()
+            aux = stack.pop() % a
+            stack.append(float("{:.2f}".format(aux)))
         case "^":
             a = stack.pop()
             b = stack.pop()
@@ -72,4 +69,4 @@ def calculator(exp):
                 aux = b ** a
             stack.append(float("{:.2f}".format(aux)))
 
-
+readfrominput("110 + ( 20 - ( 30 * ( 40 / ( 50 + ( 60 ^ 2 ) ) ) ) )")

@@ -72,4 +72,4 @@ def calculator(exp):
             stack.append(aux)
 
 
-visualizer("! ( A | B ) & ! C")
+visualizer("! ( A | B ) & ! C | D - ( E = F )")

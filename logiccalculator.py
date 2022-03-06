@@ -94,6 +94,6 @@ def calculator(exp):
 
     print(tabulate(final, headers = ["Token", "Operator Stack", "Evaluation Stack"], tablefmt="grid"))
 
-
+calculator("! ( 1 | 0 ) & ! 1 | 0 - ( 1 = 1 )")
 
 

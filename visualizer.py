@@ -10,7 +10,6 @@ def visualizer(exp):
     operator_value = {"+": 1, "-": 1, "*": 2, "/": 2, "(": 0, ")": 0, "^": 3, "%": 2}
     final = []
     for token in expression:
-        auxiliary = []
         if token.isalnum():
             stack.append(str(token))
         elif token == "(":
@@ -22,30 +21,21 @@ def visualizer(exp):
             aux = "("+stack.pop()+")"
             stack.append(aux)
             operator.pop()
-        else:
+        elif token in operator_value.keys():
             while len(operator) and operator_value[operator[-1]] >= operator_value[token]:
                 calculator(operator[-1])
                 operator.pop()
             operator.append(token)
-        auxiliary.append(token)
-        auxiliary.append(" ".join(operator))
-        auxiliary.append(" ".join([str(x) for x in stack]))
-        final.append(auxiliary)
+        else:
+            stack.append(str(token))
+        final.append([token, " ".join(operator), " ".join([str(x) for x in stack])])
     while len(operator):
-        auxiliary = []
         calculator(operator[-1])
         operator.pop()
         if operator:
-            auxiliary.append(operator[-1])
-            auxiliary.append(" ".join(operator))
-            auxiliary.append(" ".join([str(x) for x in stack]))
-            final.append(auxiliary)
+            final.append([" ", " ".join(operator), " ".join([str(x) for x in stack])])
         else:
-            auxiliary.append(" ")
-            auxiliary.append("Result is: ")
-            y = " ".join([str(x) for x in stack])
-            auxiliary.append(y)
-            final.append(auxiliary)
+            final.append([" ", "Result is: ", stack.pop()])
 
     print(tabulate(final, headers = ["Token", "Operator Stack", "Evaluation Stack"], tablefmt="grid"))
 
@@ -76,3 +66,4 @@ def calculator(exp):
             aux = stack.pop() + " ^ " + a
             stack.append(aux)
 
+visualizer("110 + ( 20 - ( 30 * ( 40 / ( 50 + ( 60 ^ 2 ) ) ) ) )")
